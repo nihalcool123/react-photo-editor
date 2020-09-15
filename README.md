@@ -1,1 +1,1 @@
-React Photo editor simple
+React Photo editor simple :satisfied:
