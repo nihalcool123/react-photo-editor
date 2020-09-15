@@ -26,7 +26,7 @@ const DEFAULT_OPTIONS = [
   },
   {
     name: "Saturation",
-    property: "saturation",
+    property: "saturate",
     value: 100,
     range: {
       min: 0,
@@ -37,7 +37,7 @@ const DEFAULT_OPTIONS = [
   {
     name: "Grayscale",
     property: "grayscale",
-    value: 100,
+    value: 0,
     range: {
       min: 0,
       max: 200
@@ -45,19 +45,9 @@ const DEFAULT_OPTIONS = [
     unit: "%"
   },
   {
-    name: "Brightness",
-    property: "brightness",
-    value: 100,
-    range: {
-      min: 0,
-      max: 100
-    },
-    unit: "%"
-  },
-  {
     name: "Sepia",
     property: "sepia",
-    value: 100,
+    value: 0,
     range: {
       min: 0,
       max: 100
@@ -67,7 +57,7 @@ const DEFAULT_OPTIONS = [
   {
     name: "Hue Rotate",
     property: "hue-rotate",
-    value: 100,
+    value: 0,
     range: {
       min: 0,
       max: 360
@@ -77,7 +67,7 @@ const DEFAULT_OPTIONS = [
   {
     name: "Blur",
     property: "blur",
-    value: 100,
+    value: 0,
     range: {
       min: 0,
       max: 20
@@ -92,9 +82,27 @@ export default function App() {
 
   const selectedOption = options[selectedOptionIndex];
 
+  function handleSliderChange({ target }) {
+    setOptions(prevOptions => {
+      return prevOptions.map((option, index) => {
+        if (index !== selectedOptionIndex) return option;
+
+        return { ...option, value: target.value };
+      });
+    });
+  }
+
+  function getImageStyle() {
+    const filters = options.map(option => {
+      return `${option.property}(${option.value}${option.unit})`;
+    });
+
+    return { filter: filters.join(" ") };
+  }
+
   return (
     <div className="container">
-      <div className="main-image" />
+      <div className="main-image" style={getImageStyle()} />
       <div className="sidebar">
         {options.map((option, index) => {
           return (
@@ -108,7 +116,12 @@ export default function App() {
         })}
       </div>
 
-      <Slider />
+      <Slider
+        min={selectedOption.range.min}
+        max={selectedOption.range.max}
+        value={selectedOption.value}
+        handleChange={handleSliderChange}
+      />
     </div>
   );
 }
